@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government HRMS - Employee Management System</title>
+    <style>
+        :root {
+            --color-primary: #1e40af;
+            --color-primary-hover: #1e3a8a;
+            --color-success: #059669;
+            --color-warning: #d97706;
+            --color-danger: #dc2626;
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-border: #e2e8f0;
+            --color-text: #1e293b;
+            --color-text-secondary: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--color-border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 0.875rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--color-primary);
+            background: rgba(30, 64, 175, 0.05);
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--color-border);
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--color-text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .stat-card.success {
+            border-left-color: var(--color-success);
+        }
+
+        .stat-card.warning {
+            border-left-color: var(--color-warning);
+        }
+
+        .stat-card.danger {
+            border-left-color: var(--color-danger);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--color-text);
+        }
+
+        .required {
+            color: var(--color-danger);
+        }
+
+        input, select, textarea {
+            padding: 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--color-surface);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .btn-secondary {
+            background: var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: #f1f5f9;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-group-a { background: #dbeafe; color: #1e40af; }
+        .badge-group-b { background: #dcfce7; color: #166534; }
+        .badge-group-c { background: #fef3c7; color: #92400e; }
+        .badge-group-d { background: #fee2e2; color: #991b1b; }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding-left: 2.5rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-secondary);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--color-text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 8px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-success);
+            transition: width 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .table-container {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏛️ Government HRMS</h1>
+        <p>Human Resource Management System - Employee &amp; Office Strength Management</p>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showTab('employees')">👥 Employees</button>
+            <button class="tab" onclick="showTab('offices')">🏢 Offices</button>
+            <button class="tab" onclick="showTab('transactions')">📝 Transactions</button>
+            <button class="tab" onclick="showTab('reports')">📈 Reports</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Employees</div>
+                    <div class="stat-value" id="totalEmployees">0</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">Sanctioned Strength</div>
+                    <div class="stat-value" id="sanctionedStrength">0</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">Vacant Posts</div>
+                    <div class="stat-value" id="vacantPosts">0</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-label">Retirements This Year</div>
+                    <div class="stat-value" id="retirementsThisYear">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Group-wise Distribution</div>
+                <div class="table-container">
+                    <table id="groupDistribution">
+                        <thead>
+                            <tr>
+                                <th>Group</th>
+                                <th>Sanctioned</th>
+                                <th>Working</th>
+                                <th>Vacant</th>
+                                <th>Occupancy</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Commissionerate-wise Strength</div>
+                <div class="table-container">
+                    <table id="commissionerateStrength">
+                        <thead>
+                            <tr>
+                                <th>Commissionerate</th>
+                                <th>Offices</th>
+                                <th>Sanctioned</th>
+                                <th>Working</th>
+                                <th>Vacant</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employees Tab -->
+        <div id="employees" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <span>Employee Management</span>
+                    <button class="btn btn-primary btn-small" onclick="showAddEmployee()">+ Add Employee</button>
+                </div>
+
+                <div id="addEmployeeForm" style="display: none;">
+                    <form onsubmit="addEmployee(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Employee ID <span class="required">*</span></label>
+                                <input type="text" id="empId" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Name <span class="required">*</span></label>
+                                <input type="text" id="empName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Father's Name <span class="required">*</span></label>
+                                <input type="text" id="empFatherName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth <span class="required">*</span></label>
+                                <input type="date" id="empDOB" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" id="empPhone">
+                            </div>
+                            <div class="form-group">
+                                <label>Group <span class="required">*</span></label>
+                                <select id="empGroup" required>
+                                    <option value="">Select Group</option>
+                                    <option value="A">Group A</option>
+                                    <option value="B">Group B</option>
+                                    <option value="C">Group C</option>
+                                    <option value="D">Group D</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Post <span class="required">*</span></label>
+                                <input type="text" id="empPost" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Office <span class="required">*</span></label>
+                                <select id="empOffice" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Joining <span class="required">*</span></label>
+                                <input type="date" id="empJoining" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Retirement</label>
+                                <input type="date" id="empRetirement">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="empAddress"></textarea>
+                        </div>
+                        <div class="actions">
+                            <button type="submit" class="btn btn-success">Save Employee</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideAddEmployee()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="employeeSearch" placeholder="Search employees by name, ID, post..." onkeyup="filterEmployees()">
+                </div>
+
+                <div class="filter-section">
+                    <select id="groupFilter" onchange="filterEmployees()">
+                        <option value="">All Groups</option>
+                        <option value="A">Group A</option>
+                        <option value="B">Group B</option>
+                        <option value="C">Group C</option>
+                        <option value="D">Group D</option>
+                    </select>
+                    <select id="officeFilter" onchange="filterEmployees()"></select>
+                </div>
+
+                <div class="table-container">
+                    <table id="employeesTable">
+                        <thead>
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Father's Name</th>
+                                <th>Group</th>
+                                <th>Post</th>
+                                <th>Office</th>
+                                <th>Date of Joining</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Offices Tab -->
+        <div id="offices" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <span>Office Management</span>
+                    <button class="btn btn-primary btn-small" onclick="showAddOffice()">+ Add Office</button>
+                </div>
+
+                <div id="addOfficeForm" style="display: none;">
+                    <form onsubmit="addOffice(event)">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Office Code <span class="required">*</span></label>
+                                <input type="text" id="officeCode" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Office Name <span class="required">*</span></label>
+                                <input type="text" id="officeName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Commissionerate <span class="required">*</span></label>
+                                <select id="officeCommissionerate" required>
+                                    <option value="">Select Commissionerate</option>
+                                    <option value="Commissionerate-1">Commissionerate-1</option>
+                                    <option value="Commissionerate-2">Commissionerate-2</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Location <span class="required">*</span></label>
+                                <input type="text" id="officeLocation" required>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button type="submit" class="btn btn-success">Save Office</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideAddOffice()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <table id="officesTable">
+                        <thead>
+                            <tr>
+                                <th>Office Code</th>
+                                <th>Office Name</th>
+                                <th>Commissionerate</th>
+                                <th>Location</th>
+                                <th>Sanctioned</th>
+                                <th>Working</th>
+                                <th>Vacant</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Set Sanctioned Strength</div>
+                <form onsubmit="setSanctionedStrength(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Office <span class="required">*</span></label>
+                            <select id="sanctionOffice" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Group <span class="required">*</span></label>
+                            <select id="sanctionGroup" required>
+                                <option value="">Select Group</option>
+                                <option value="A">Group A</option>
+                                <option value="B">Group B</option>
+                                <option value="C">Group C</option>
+                                <option value="D">Group D</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Post Name <span class="required">*</span></label>
+                            <input type="text" id="sanctionPost" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Sanctioned Count <span class="required">*</span></label>
+                            <input type="number" id="sanctionCount" min="1" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Set Strength</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Transactions Tab -->
+        <div id="transactions" class="tab-content">
+            <div class="card">
+                <div class="card-header">Record Transaction</div>
+                <form onsubmit="recordTransaction(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Transaction Type <span class="required">*</span></label>
+                            <select id="transactionType" required onchange="handleTransactionTypeChange()">
+                                <option value="">Select Type</option>
+                                <option value="Transfer">Transfer</option>
+                                <option value="Promotion">Promotion</option>
+                                <option value="Retirement">Retirement</option>
+                                <option value="New Recruitment">New Recruitment</option>
+                                <option value="Death">Death</option>
+                                <option value="Pay Fixation">Pay Fixation</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Employee <span class="required">*</span></label>
+                            <select id="transactionEmployee" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Date <span class="required">*</span></label>
+                            <input type="date" id="transactionDate" required>
+                        </div>
+                    </div>
+
+                    <div id="transferFields" style="display: none;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>From Office</label>
+                                <input type="text" id="fromOffice" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>To Office <span class="required">*</span></label>
+                                <select id="toOffice"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="promotionFields" style="display: none;">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>New Group <span class="required">*</span></label>
+                                <select id="newGroup">
+                                    <option value="">Select Group</option>
+                                    <option value="A">Group A</option>
+                                    <option value="B">Group B</option>
+                                    <option value="C">Group C</option>
+                                    <option value="D">Group D</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>New Post <span class="required">*</span></label>
+                                <input type="text" id="newPost">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Remarks</label>
+                        <textarea id="transactionRemarks"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Record Transaction</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Transaction History</div>
+                <div class="table-container">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Employee</th>
+                                <th>Details</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="card">
+                <div class="card-header">Generate Reports</div>
+                
+                <div class="form-group">
+                    <label>Report Type</label>
+                    <select id="reportType" onchange="generateReport()">
+                        <option value="">Select Report Type</option>
+                        <option value="strength">Office-wise Strength Report</option>
+                        <option value="vacancies">Vacancy Report</option>
+                        <option value="retirements">Upcoming Retirements</option>
+                        <option value="group">Group-wise Employee List</option>
+                    </select>
+                </div>
+
+                <div id="reportOutput"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let employees = [];
+        let offices = [];
+        let sanctionedStrength = [];
+        let transactions = [];
+
+        // Initialize with sample data
+        function initializeSampleData() {
+            // Sample Offices
+            offices = [
+                { code: 'HQ-001', name: 'Head Office', commissionerate: 'Commissionerate-1', location: 'Patiala' },
+                { code: 'REG-001', name: 'Regional Office Ludhiana', commissionerate: 'Commissionerate-1', location: 'Ludhiana' },
+                { code: 'REG-002', name: 'Regional Office Amritsar', commissionerate: 'Commissionerate-1', location: 'Amritsar' },
+                { code: 'HQ-002', name: 'Divisional Office', commissionerate: 'Commissionerate-2', location: 'Jalandhar' },
+                { code: 'REG-003', name: 'Regional Office Bathinda', commissionerate: 'Commissionerate-2', location: 'Bathinda' }
+            ];
+
+            // Sample Sanctioned Strength
+            sanctionedStrength = [
+                { office: 'HQ-001', group: 'A', post: 'Commissioner', count: 1 },
+                { office: 'HQ-001', group: 'A', post: 'Deputy Commissioner', count: 3 },
+                { office: 'HQ-001', group: 'B', post: 'Superintendent', count: 5 },
+                { office: 'HQ-001', group: 'C', post: 'Assistant', count: 15 },
+                { office: 'HQ-001', group: 'D', post: 'Clerk', count: 20 },
+                { office: 'REG-001', group: 'B', post: 'Regional Manager', count: 2 },
+                { office: 'REG-001', group: 'C', post: 'Assistant', count: 10 },
+                { office: 'REG-001', group: 'D', post: 'Clerk', count: 15 }
+            ];
+
+            // Sample Employees
+            employees = [
+                { id: 'EMP001', name: 'Rajesh Kumar', fatherName: 'Ram Kumar', dob: '1980-05-15', phone: '9876543210', group: 'A', post: 'Commissioner', office: 'HQ-001', joiningDate: '2005-07-01', retirementDate: '2040-05-31', address: 'Patiala, Punjab' },
+                { id: 'EMP002', name: 'Priya Sharma', fatherName: 'Vijay Sharma', dob: '1985-08-20', phone: '9876543211', group: 'A', post: 'Deputy Commissioner', office: 'HQ-001', joiningDate: '2010-03-15', retirementDate: '2045-08-31', address: 'Patiala, Punjab' },
+                { id: 'EMP003', name: 'Amit Singh', fatherName: 'Sukhdev Singh', dob: '1988-03-10', phone: '9876543212', group: 'B', post: 'Superintendent', office: 'HQ-001', joiningDate: '2012-06-01', retirementDate: '2048-03-31', address: 'Ludhiana, Punjab' },
+                { id: 'EMP004', name: 'Sunita Devi', fatherName: 'Ramesh Chand', dob: '1990-11-25', phone: '9876543213', group: 'C', post: 'Assistant', office: 'REG-001', joiningDate: '2015-01-10', retirementDate: '2050-11-30', address: 'Ludhiana, Punjab' },
+                { id: 'EMP005', name: 'Harpreet Kaur', fatherName: 'Balwinder Singh', dob: '1992-07-05', phone: '9876543214', group: 'C', post: 'Assistant', office: 'REG-001', joiningDate: '2016-09-01', retirementDate: '2052-07-31', address: 'Amritsar, Punjab' }
+            ];
+
+            updateDashboard();
+            populateAllDropdowns();
+            renderEmployeesTable();
+            renderOfficesTable();
+        }
+
+        // Tab Management
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Dashboard Functions
+        function updateDashboard() {
+            const totalEmp = employees.length;
+            const totalSanctioned = sanctionedStrength.reduce((sum, s) => sum + s.count, 0);
+            const vacantCount = totalSanctioned - totalEmp;
+            
+            const currentYear = new Date().getFullYear();
+            const retirementsThisYear = employees.filter(e => {
+                if (!e.retirementDate) return false;
+                return new Date(e.retirementDate).getFullYear() === currentYear;
+            }).length;
+
+            document.getElementById('totalEmployees').textContent = totalEmp;
+            document.getElementById('sanctionedStrength').textContent = totalSanctioned;
+            document.getElementById('vacantPosts').textContent = vacantCount;
+            document.getElementById('retirementsThisYear').textContent = retirementsThisYear;
+
+            updateGroupDistribution();
+            updateCommissionerateStrength();
+        }
+
+        function updateGroupDistribution() {
+            const groups = ['A', 'B', 'C', 'D'];
+            const tbody = document.querySelector('#groupDistribution tbody');
+            tbody.innerHTML = '';
+
+            groups.forEach(group => {
+                const sanctioned = sanctionedStrength.filter(s => s.group === group).reduce((sum, s) => sum + s.count, 0);
+                const working = employees.filter(e => e.group === group).length;
+                const vacant = sanctioned - working;
+                const occupancy = sanctioned > 0 ? ((working / sanctioned) * 100).toFixed(1) : 0;
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><span class="badge badge-group-${group.toLowerCase()}">Group ${group}</span></td>
+                    <td>${sanctioned}</td>
+                    <td>${working}</td>
+                    <td>${vacant}</td>
+                    <td>
+                        ${occupancy}%
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${occupancy}%"></div>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function updateCommissionerateStrength() {
+            const commissionerates = ['Commissionerate-1', 'Commissionerate-2'];
+            const tbody = document.querySelector('#commissionerateStrength tbody');
+            tbody.innerHTML = '';
+
+            commissionerates.forEach(comm => {
+                const commOffices = offices.filter(o => o.commissionerate === comm);
+                const officeCount = commOffices.length;
+                
+                const officeCodes = commOffices.map(o => o.code);
+                const sanctioned = sanctionedStrength.filter(s => officeCodes.includes(s.office)).reduce((sum, s) => sum + s.count, 0);
+                const working = employees.filter(e => officeCodes.includes(e.office)).length;
+                const vacant = sanctioned - working;
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><strong>${comm}</strong></td>
+                    <td>${officeCount}</td>
+                    <td>${sanctioned}</td>
+                    <td>${working}</td>
+                    <td>${vacant}</td>
+                `;
+            });
+        }
+
+        // Employee Management
+        function showAddEmployee() {
+            document.getElementById('addEmployeeForm').style.display = 'block';
+        }
+
+        function hideAddEmployee() {
+            document.getElementById('addEmployeeForm').style.display = 'none';
+            document.querySelector('#addEmployeeForm form').reset();
+        }
+
+        function addEmployee(event) {
+            event.preventDefault();
+            
+            const employee = {
+                id: document.getElementById('empId').value,
+                name: document.getElementById('empName').value,
+                fatherName: document.getElementById('empFatherName').value,
+                dob: document.getElementById('empDOB').value,
+                phone: document.getElementById('empPhone').value,
+                group: document.getElementById('empGroup').value,
+                post: document.getElementById('empPost').value,
+                office: document.getElementById('empOffice').value,
+                joiningDate: document.getElementById('empJoining').value,
+                retirementDate: document.getElementById('empRetirement').value,
+                address: document.getElementById('empAddress').value
+            };
+
+            employees.push(employee);
+            
+            // Record transaction
+            transactions.push({
+                date: new Date().toISOString().split('T')[0],
+                type: 'New Recruitment',
+                employee: employee.name,
+                details: `Joined as ${employee.post} in ${getOfficeName(employee.office)}`,
+                remarks: 'New recruitment'
+            });
+
+            hideAddEmployee();
+            renderEmployeesTable();
+            updateDashboard();
+            alert('Employee added successfully!');
+        }
+
+        function renderEmployeesTable() {
+            const tbody = document.querySelector('#employeesTable tbody');
+            tbody.innerHTML = '';
+
+            const filtered = getFilteredEmployees();
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No employees found</td></tr>';
+                return;
+            }
+
+            filtered.forEach(emp => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${emp.id}</td>
+                    <td>${emp.name}</td>
+                    <td>${emp.fatherName}</td>
+                    <td><span class="badge badge-group-${emp.group.toLowerCase()}">Group ${emp.group}</span></td>
+                    <td>${emp.post}</td>
+                    <td>${getOfficeName(emp.office)}</td>
+                    <td>${formatDate(emp.joiningDate)}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-secondary btn-small" onclick="viewEmployee('${emp.id}')">View</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function getFilteredEmployees() {
+            const search = document.getElementById('employeeSearch').value.toLowerCase();
+            const groupFilter = document.getElementById('groupFilter').value;
+            const officeFilter = document.getElementById('officeFilter').value;
+
+            return employees.filter(emp => {
+                const matchSearch = !search || 
+                    emp.name.toLowerCase().includes(search) ||
+                    emp.id.toLowerCase().includes(search) ||
+                    emp.post.toLowerCase().includes(search);
+                
+                const matchGroup = !groupFilter || emp.group === groupFilter;
+                const matchOffice = !officeFilter || emp.office === officeFilter;
+
+                return matchSearch && matchGroup && matchOffice;
+            });
+        }
+
+        function filterEmployees() {
+            renderEmployeesTable();
+        }
+
+        function viewEmployee(empId) {
+            const emp = employees.find(e => e.id === empId);
+            if (emp) {
+                alert(`Employee Details:\n\nID: ${emp.id}\nName: ${emp.name}\nFather's Name: ${emp.fatherName}\nDOB: ${formatDate(emp.dob)}\nGroup: ${emp.group}\nPost: ${emp.post}\nOffice: ${getOfficeName(emp.office)}\nJoining Date: ${formatDate(emp.joiningDate)}\nPhone: ${emp.phone}\nAddress: ${emp.address}`);
+            }
+        }
+
+        // Office Management
+        function showAddOffice() {
+            document.getElementById('addOfficeForm').style.display = 'block';
+        }
+
+        function hideAddOffice() {
+            document.getElementById('addOfficeForm').style.display = 'none';
+            document.querySelector('#addOfficeForm form').reset();
+        }
+
+        function addOffice(event) {
+            event.preventDefault();
+            
+            const office = {
+                code: document.getElementById('officeCode').value,
+                name: document.getElementById('officeName').value,
+                commissionerate: document.getElementById('officeCommissionerate').value,
+                location: document.getElementById('officeLocation').value
+            };
+
+            offices.push(office);
+            hideAddOffice();
+            renderOfficesTable();
+            populateAllDropdowns();
+            updateDashboard();
+            alert('Office added successfully!');
+        }
+
+        function renderOfficesTable() {
+            const tbody = document.querySelector('#officesTable tbody');
+            tbody.innerHTML = '';
+
+            offices.forEach(office => {
+                const sanctioned = sanctionedStrength.filter(s => s.office === office.code).reduce((sum, s) => sum + s.count, 0);
+                const working = employees.filter(e => e.office === office.code).length;
+                const vacant = sanctioned - working;
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${office.code}</td>
+                    <td>${office.name}</td>
+                    <td>${office.commissionerate}</td>
+                    <td>${office.location}</td>
+                    <td>${sanctioned}</td>
+                    <td>${working}</td>
+                    <td>${vacant}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-small" onclick="viewOfficeDetails('${office.code}')">Details</button>
+                    </td>
+                `;
+            });
+        }
+
+        function viewOfficeDetails(officeCode) {
+            const office = offices.find(o => o.code === officeCode);
+            const officeEmployees = employees.filter(e => e.office === officeCode);
+            const officeSanctioned = sanctionedStrength.filter(s => s.office === officeCode);
+
+            let details = `Office Details:\n\nCode: ${office.code}\nName: ${office.name}\nCommissionerate: ${office.commissionerate}\nLocation: ${office.location}\n\nSanctioned Strength:\n`;
+            
+            officeSanctioned.forEach(s => {
+                const working = officeEmployees.filter(e => e.group === s.group && e.post === s.post).length;
+                details += `\n${s.post} (Group ${s.group}): ${working}/${s.count}`;
+            });
+
+            alert(details);
+        }
+
+        function setSanctionedStrength(event) {
+            event.preventDefault();
+
+            const strength = {
+                office: document.getElementById('sanctionOffice').value,
+                group: document.getElementById('sanctionGroup').value,
+                post: document.getElementById('sanctionPost').value,
+                count: parseInt(document.getElementById('sanctionCount').value)
+            };
+
+            // Check if already exists
+            const existingIndex = sanctionedStrength.findIndex(s => 
+                s.office === strength.office && s.group === strength.group && s.post === strength.post
+            );
+
+            if (existingIndex >= 0) {
+                sanctionedStrength[existingIndex] = strength;
+            } else {
+                sanctionedStrength.push(strength);
+            }
+
+            event.target.reset();
+            renderOfficesTable();
+            updateDashboard();
+            alert('Sanctioned strength updated successfully!');
+        }
+
+        // Transaction Management
+        function handleTransactionTypeChange() {
+            const type = document.getElementById('transactionType').value;
+            
+            document.getElementById('transferFields').style.display = type === 'Transfer' ? 'block' : 'none';
+            document.getElementById('promotionFields').style.display = type === 'Promotion' ? 'block' : 'none';
+        }
+
+        function recordTransaction(event) {
+            event.preventDefault();
+
+            const type = document.getElementById('transactionType').value;
+            const empId = document.getElementById('transactionEmployee').value;
+            const date = document.getElementById('transactionDate').value;
+            const remarks = document.getElementById('transactionRemarks').value;
+
+            const employee = employees.find(e => e.id === empId);
+            let details = '';
+
+            if (type === 'Transfer') {
+                const toOffice = document.getElementById('toOffice').value;
+                const fromOffice = employee.office;
+                employee.office = toOffice;
+                details = `Transferred from ${getOfficeName(fromOffice)} to ${getOfficeName(toOffice)}`;
+            } else if (type === 'Promotion') {
+                const newGroup = document.getElementById('newGroup').value;
+                const newPost = document.getElementById('newPost').value;
+                details = `Promoted from ${employee.post} (Group ${employee.group}) to ${newPost} (Group ${newGroup})`;
+                employee.group = newGroup;
+                employee.post = newPost;
+            } else if (type === 'Retirement' || type === 'Death') {
+                const index = employees.findIndex(e => e.id === empId);
+                employees.splice(index, 1);
+                details = `${type} of ${employee.name} from ${employee.post}`;
+            } else if (type === 'Pay Fixation') {
+                details = `Pay fixation for ${employee.name}`;
+            }
+
+            transactions.push({
+                date: date,
+                type: type,
+                employee: employee ? employee.name : 'N/A',
+                details: details,
+                remarks: remarks
+            });
+
+            event.target.reset();
+            handleTransactionTypeChange();
+            renderTransactionsTable();
+            renderEmployeesTable();
+            updateDashboard();
+            alert('Transaction recorded successfully!');
+        }
+
+        function renderTransactionsTable() {
+            const tbody = document.querySelector('#transactionsTable tbody');
+            tbody.innerHTML = '';
+
+            const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sorted.forEach(trans => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${formatDate(trans.date)}</td>
+                    <td><strong>${trans.type}</strong></td>
+                    <td>${trans.employee}</td>
+                    <td>${trans.details}</td>
+                    <td>${trans.remarks}</td>
+                `;
+            });
+        }
+
+        // Reports
+        function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const output = document.getElementById('reportOutput');
+
+            if (!reportType) {
+                output.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="card"><div class="card-header">Report Output</div><div class="table-container">';
+
+            if (reportType === 'strength') {
+                html += '<table><thead><tr><th>Office</th><th>Commissionerate</th><th>Sanctioned</th><th>Working</th><th>Vacant</th></tr></thead><tbody>';
+                offices.forEach(office => {
+                    const sanctioned = sanctionedStrength.filter(s => s.office === office.code).reduce((sum, s) => sum + s.count, 0);
+                    const working = employees.filter(e => e.office === office.code).length;
+                    html += `<tr><td>${office.name}</td><td>${office.commissionerate}</td><td>${sanctioned}</td><td>${working}</td><td>${sanctioned - working}</td></tr>`;
+                });
+                html += '</tbody></table>';
+            } else if (reportType === 'vacancies') {
+                html += '<table><thead><tr><th>Office</th><th>Group</th><th>Post</th><th>Sanctioned</th><th>Working</th><th>Vacant</th></tr></thead><tbody>';
+                sanctionedStrength.forEach(s => {
+                    const working = employees.filter(e => e.office === s.office && e.group === s.group && e.post === s.post).length;
+                    const vacant = s.count - working;
+                    if (vacant > 0) {
+                        html += `<tr><td>${getOfficeName(s.office)}</td><td>Group ${s.group}</td><td>${s.post}</td><td>${s.count}</td><td>${working}</td><td>${vacant}</td></tr>`;
+                    }
+                });
+                html += '</tbody></table>';
+            } else if (reportType === 'retirements') {
+                const nextYear = new Date().getFullYear() + 1;
+                html += '<table><thead><tr><th>Employee ID</th><th>Name</th><th>Post</th><th>Office</th><th>Retirement Date</th></tr></thead><tbody>';
+                employees.filter(e => e.retirementDate && new Date(e.retirementDate).getFullYear() <= nextYear).forEach(emp => {
+                    html += `<tr><td>${emp.id}</td><td>${emp.name}</td><td>${emp.post}</td><td>${getOfficeName(emp.office)}</td><td>${formatDate(emp.retirementDate)}</td></tr>`;
+                });
+                html += '</tbody></table>';
+            } else if (reportType === 'group') {
+                html += '<table><thead><tr><th>Group</th><th>Employee ID</th><th>Name</th><th>Post</th><th>Office</th></tr></thead><tbody>';
+                ['A', 'B', 'C', 'D'].forEach(group => {
+                    employees.filter(e => e.group === group).forEach(emp => {
+                        html += `<tr><td><span class="badge badge-group-${group.toLowerCase()}">Group ${group}</span></td><td>${emp.id}</td><td>${emp.name}</td><td>${emp.post}</td><td>${getOfficeName(emp.office)}</td></tr>`;
+                    });
+                });
+                html += '</tbody></table>';
+            }
+
+            html += '</div></div>';
+            output.innerHTML = html;
+        }
+
+        // Utility Functions
+        function populateAllDropdowns() {
+            // Populate office dropdowns
+            const officeSelects = ['empOffice', 'officeFilter', 'sanctionOffice', 'toOffice'];
+            officeSelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    const currentValue = select.value;
+                    select.innerHTML = selectId === 'officeFilter' ? '<option value="">All Offices</option>' : '<option value="">Select Office</option>';
+                    offices.forEach(office => {
+                        select.innerHTML += `<option value="${office.code}">${office.name}</option>`;
+                    });
+                    if (currentValue) select.value = currentValue;
+                }
+            });
+
+            // Populate employee dropdown for transactions
+            const empSelect = document.getElementById('transactionEmployee');
+            if (empSelect) {
+                empSelect.innerHTML = '<option value="">Select Employee</option>';
+                employees.forEach(emp => {
+                    empSelect.innerHTML += `<option value="${emp.id}">${emp.name} (${emp.id})</option>`;
+                });
+            }
+        }
+
+        function getOfficeName(code) {
+            const office = offices.find(o => o.code === code);
+            return office ? office.name : code;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        // Update employee selector when transaction type changes
+        document.getElementById('transactionEmployee').addEventListener('change', function() {
+            const empId = this.value;
+            if (empId) {
+                const employee = employees.find(e => e.id === empId);
+                if (employee) {
+                    const fromOfficeInput = document.getElementById('fromOffice');
+                    if (fromOfficeInput) {
+                        fromOfficeInput.value = getOfficeName(employee.office);
+                    }
+                }
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            initializeSampleData();
+            renderTransactionsTable();
+        });
+    </script>
+</body>
+</html>
+
